@@ -49,9 +49,11 @@ useEffect(() => {
       if (text === "created") {
         // Firebase CREATED pins
         firebaseSaved = await userCreatedPinsQuery(userId);
+        console.log("Firebase created pins:", firebaseSaved);
         setPins(firebaseSaved);
         return;
       }
+console.log(pins);
 
       
       const firebaseResult = await userSavedPinsQuery(userId);
