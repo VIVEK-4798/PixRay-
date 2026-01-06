@@ -159,40 +159,41 @@ export const pinDetailMorePinQuery = async (pin) => {
 /* ------------------------------------------------------------ */
 /*                  USER CREATED PINS                           */
 /* ------------------------------------------------------------ */
-export const userCreatedPinsQuery = async (userId) => {
-  try {
-    const pinsRef = collection(db, "pins");
-
-    let q;
-
+  export const userCreatedPinsQuery = async (userId) => {
     try {
-      q = query(
-        pinsRef,
-        where("userId", "==", userId),
-        orderBy("createdAt", "desc")
-      );
-    } catch (e) {
-      q = query(
-        pinsRef,
-        where("userId", "==", userId),
-        orderBy("_createdAt", "desc")
-      );
+      const pinsRef = collection(db, "pins");
+  
+      const q = query(pinsRef, where("userId", "==", userId), orderBy("_createdAt", "desc"));
+  
+      const querySnapshot = await getDocs(q);
+  
+      const pins = querySnapshot.docs.map(doc => {
+        const pinData = doc.data();
+        return {
+          _id: doc.id,
+          image: pinData.image || null, 
+          destination: pinData.destination,
+          postedBy: {
+            _id: pinData.postedBy?._id,
+            userName: pinData.postedBy?.userName,
+            image: pinData.postedBy?.image,
+          },
+          save: pinData.save?.map(saveItem => ({
+            postedBy: {
+              _id: saveItem.postedBy?._id,
+              userName: saveItem.postedBy?.userName,
+              image: saveItem.postedBy?.image,
+            },
+          })) || [],
+        };
+      });
+  
+      return pins;
+    } catch (error) {
+      console.error("Error fetching pins: ", error);
+      return [];
     }
-
-    const snap = await getDocs(q);
-
-    return snap.docs.map(d => ({
-      _id: d.id,
-      ...d.data(),
-      imageUrl: d.data().imageUrl || d.data().image || null
-    }));
-
-  } catch (err) {
-    console.error(err);
-    return [];
-  }
-};
-
+  };
 
 /* ------------------------------------------------------------ */
 /*                    USER SAVED PINS                           */

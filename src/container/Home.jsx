@@ -1,4 +1,3 @@
-// src/pages/Home.jsx (updated: Firebase pins first, then Unsplash pins)
 import React, { useState, useEffect, useRef } from "react";
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
 import { doc, getDoc } from "firebase/firestore";
@@ -79,30 +78,33 @@ const Home = () => {
 
       try {
         // 1) fetch some pins from Firestore if available
-        let firebasePins = [];
-        try {
-          const pinsCol = collection(db, "pins");
-          const q = query(pinsCol, orderBy("createdAt", "desc"), limit(20));
-          const snapshot = await getDocs(q);
-          firebasePins = snapshot.docs.map((d) => ({ _id: d.id, ...d.data() }));
-        } catch (err) {
-          // fallback if createdAt or ordering not present
-          try {
-            const pinsCol = collection(db, "pins");
-            const snapshot = await getDocs(query(pinsCol, limit(20)));
-            firebasePins = snapshot.docs.map((d) => ({ _id: d.id, ...d.data() }));
-          } catch (err2) {
-            console.warn("No Firebase pins or error fetching pins:", err2);
-            firebasePins = [];
-          }
-        }
+        // 1) fetch some pins from Firestore (unordered, simple)
+let firebasePins = [];
+try {
+  const pinsCol = collection(db, "pins");
+  const snapshot = await getDocs(query(pinsCol, limit(20)));
+  firebasePins = snapshot.docs.map((d) => {
+  const data = d.data();
+  return {
+    _id: d.id,
+    ...data,
+    imageUrl: data.imageUrl || data.image || null,   // ← FIX
+  };
+});
+
+} catch (err) {
+  console.error("Error fetching Firebase pins:", err);
+  firebasePins = [];
+}
+
+console.log("🔥 Firebase pins fetched:", firebasePins);
+
 
         // 2) fetch Unsplash images and convert
         let unsplashPins = [];
         try {
           const images = await fetchRandomImages(24);
           unsplashPins = (images || []).map((img) => convertUnsplashToPin(img)).filter(Boolean);
-          console.log(unsplashPins);
           
         } catch (err) {
           console.error("Unsplash fetch failed:", err);
@@ -164,7 +166,6 @@ const Home = () => {
       <div className="pb-2 flex-1 h-screen overflow-y-scroll" ref={scrollRef}>
         <NewNavbar />
         {isHomeRoot && <HeroSlider />}
-        {/* User-specific feed routes (unchanged) */}
         {user ? (
           <Routes>
             <Route path="/user-profile/:userId" element={<UserProfile />} />
@@ -206,7 +207,7 @@ const Home = () => {
             </div>
           </>
         )}
-        <Footer/>        
+        {/* <Footer/>         */}
       </div>
     </div>
   );

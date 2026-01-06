@@ -180,7 +180,7 @@ const NewNavbar = ({ searchTerm, setSearchTerm, user }) => {
                     <IoMdAdd />
                   </button>
 
-                  <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 group">
+                  {/* <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 group">
                     <Bell size={22} className="text-gray-700 group-hover:text-gray-900" />
                     <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
                   </button>
@@ -188,7 +188,7 @@ const NewNavbar = ({ searchTerm, setSearchTerm, user }) => {
                   <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 group">
                     <MessageSquare size={22} className="text-gray-700 group-hover:text-gray-900" />
                     <span className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full" />
-                  </button>
+                  </button> */}
 
                   <div className="relative">
                     <button onClick={() => setShowProfileMenu(!showProfileMenu)} className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-100 transition-colors duration-200 group" aria-haspopup="true">

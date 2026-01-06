@@ -9,7 +9,6 @@ import { v4 as uuidv4 } from "uuid"
 const db = getFirestore()
 
 const LandingGallery = ({ pins = [] }) => {
-  console.log("LandingGallery received pins:", pins.length)
   const [loadedImages, setLoadedImages] = useState(new Set())
   const [hoveredPin, setHoveredPin] = useState(null)
   const user = fetchUser()

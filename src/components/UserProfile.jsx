@@ -40,49 +40,23 @@ const UserProfile = () => {
     fetchUser();
   }, [userId]);
 
-useEffect(() => {
-  const fetchPins = async () => {
-    try {
-      let firebaseSaved = [];
-      let mongoSaved = [];
-
-      if (text === "created") {
-        // Firebase CREATED pins
-        firebaseSaved = await userCreatedPinsQuery(userId);
-        console.log("Firebase created pins:", firebaseSaved);
-        setPins(firebaseSaved);
-        return;
+  useEffect(() => {
+    const fetchPins = async () => {
+      try {
+        let data;
+        if (text === 'created') {
+          data = await userCreatedPinsQuery(userId);
+        } else {
+          data = await userSavedPinsQuery(userId);
+        }
+        setPins(data);
+      } catch (error) {
+        console.error("Error fetching pins: ", error);
       }
-console.log(pins);
+    };
 
-      
-      const firebaseResult = await userSavedPinsQuery(userId);
-      firebaseSaved = firebaseResult || [];
-      
-      console.log(firebaseSaved);
-      
-
-      const res = await fetch(`http://localhost:5000/api/pins/saved/${userId}`);
-      const json = await res.json();
-
-      if (json.success) {
-        mongoSaved = json.pins;
-      } else {
-        console.error("Backend returned error:", json.message);
-      }
-
-      const combined = [...firebaseSaved, ...mongoSaved];
-
-      setPins(combined);
-    } catch (err) {
-      console.error("Error fetching pins:", err);
-      setPins([]);
-    }
-  };
-
-  fetchPins();
-}, [text, userId]);
-
+    fetchPins();
+  }, [text, userId]);
 
   const logOut  = () => {
     localStorage.clear();
@@ -92,8 +66,7 @@ console.log(pins);
   
   if(!user){
     return <Spinner message="Loading profile..."/>
-  }  
-  
+  }    
 
   return (
     <div className='relative pb-2 h-full justify-center items-center'>

@@ -20,7 +20,7 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-gray-900 text-white mt-auto">
       {/* Newsletter Section */}
       <div className="bg-gradient-to-r from-gray-800 to-gray-900 py-12 border-t border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
